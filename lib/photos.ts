@@ -1,6 +1,6 @@
 import { unstable_cache } from 'next/cache';
-import { BUILDINGS } from '@/data/buildings';
 import { getSql, hasDatabase } from './db';
+import { getAllLocations } from './locations';
 import type { BuildingPhoto, BuildingWithPhoto } from './types';
 
 export const PHOTOS_CACHE_TAG = 'building-photos';
@@ -34,5 +34,6 @@ export async function getBuildingsWithPhotos(): Promise<BuildingWithPhoto[]> {
   }
 
   const byId = new Map(photos.map((p) => [p.buildingId, p]));
-  return BUILDINGS.map((b) => ({ ...b, photo: byId.get(b.id) ?? null }));
+  const locations = await getAllLocations();
+  return locations.map((location) => ({ ...location, photo: byId.get(location.id) ?? null }));
 }

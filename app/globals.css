@@ -11,6 +11,27 @@ body {
   overscroll-behavior: none;
 }
 
+@keyframes xu-guess-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes xu-guess-correct {
+  0% { transform: scale(0.98); box-shadow: 0 0 0 0 rgb(16 185 129 / 0.35); }
+  55% { transform: scale(1.01); box-shadow: 0 0 0 10px rgb(16 185 129 / 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgb(16 185 129 / 0); }
+}
+
+@keyframes xu-timer-warning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.xu-guess-wrong { animation: xu-guess-shake 380ms ease-in-out; }
+.xu-guess-correct { animation: xu-guess-correct 700ms ease-out; }
+.xu-timer-warning { animation: xu-timer-warning 700ms ease-in-out infinite; }
+
 /* Mapbox attribution should stay legible over the sheet on mobile. */
 .mapboxgl-ctrl-bottom-left {
   z-index: 5;

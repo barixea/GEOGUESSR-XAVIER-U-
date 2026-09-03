@@ -1,7 +1,7 @@
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { NextResponse } from 'next/server';
-import { BUILDING_IDS } from '@/data/buildings';
 import { requireAdmin } from '@/lib/auth';
+import { getAllLocations } from '@/lib/locations';
 
 export const runtime = 'nodejs';
 
@@ -25,7 +25,8 @@ export async function POST(request: Request) {
         if (!session) throw new Error('Unauthorized');
 
         const match = /^buildings\/([a-z0-9-]+)\/hero\.[a-z0-9]+$/.exec(pathname);
-        if (!match || !BUILDING_IDS.has(match[1])) {
+        const locations = await getAllLocations();
+        if (!match || !locations.some((location) => location.id === match[1])) {
           throw new Error('Invalid upload path');
         }
 

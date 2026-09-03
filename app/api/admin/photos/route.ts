@@ -1,9 +1,9 @@
 import { del } from '@vercel/blob';
 import { revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
-import { BUILDING_IDS } from '@/data/buildings';
 import { requireAdmin } from '@/lib/auth';
 import { getSql } from '@/lib/db';
+import { getAllLocations } from '@/lib/locations';
 import { PHOTOS_CACHE_TAG } from '@/lib/photos';
 
 export const runtime = 'nodejs';
@@ -18,7 +18,8 @@ export async function POST(request: Request) {
     .json()
     .catch(() => ({}))) as Record<string, unknown>;
 
-  if (typeof buildingId !== 'string' || !BUILDING_IDS.has(buildingId)) {
+  const locations = await getAllLocations();
+  if (typeof buildingId !== 'string' || !locations.some((location) => location.id === buildingId)) {
     return NextResponse.json({ error: 'Unknown building' }, { status: 400 });
   }
   if (typeof url !== 'string' || typeof pathname !== 'string') {

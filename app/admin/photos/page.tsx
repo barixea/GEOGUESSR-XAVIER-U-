@@ -2,8 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import PhotoUploadForm from '@/components/admin/PhotoUploadForm';
-import { BUILDINGS } from '@/data/buildings';
+import LocationCreateForm from '@/components/admin/LocationCreateForm';
 import { requireAdmin } from '@/lib/auth';
+import { getAllLocations } from '@/lib/locations';
 import { getBuildingsWithPhotos } from '@/lib/photos';
 
 /** Readable column, centred, with even spacing between the three sections. */
@@ -23,21 +24,28 @@ export default async function AdminPhotosPage() {
   const session = await requireAdmin();
   if (!session) redirect('/admin/login');
 
+  const locations = await getAllLocations();
   const buildingsWithPhotos = await getBuildingsWithPhotos();
 
   return (
     <div className={PAGE}>
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Building photos</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">Locations and photos</h1>
         <p className="mt-1 text-sm text-slate-600">
-          Upload landmark photos to help freshmen visually identify buildings on campus.
+          Manage the places that can appear in the campus guessing game.
         </p>
       </div>
 
-      <PhotoUploadForm buildings={BUILDINGS} />
+      <LocationCreateForm />
+
+      <div className="border-t border-slate-200 pt-8">
+        <h2 className="text-lg font-semibold text-slate-900">Upload a location photo</h2>
+        <p className="mt-1 text-sm text-slate-600">Choose any existing building or custom location.</p>
+        <div className="mt-4"><PhotoUploadForm buildings={locations} /></div>
+      </div>
 
       <div>
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">Current photos</h2>
+        <h2 className="mb-4 text-lg font-semibold text-slate-900">Current locations</h2>
         {/* Every building is listed, with or without a photo, so the gaps show. */}
         <ul className="grid gap-4 sm:grid-cols-2">
           {buildingsWithPhotos.map((building) => (
@@ -52,7 +60,10 @@ export default async function AdminPhotosPage() {
                 />
               </div>
               <div className="p-3">
-                <p className="text-sm font-medium text-slate-900">{building.name}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium text-slate-900">{building.name}</p>
+                  {building.id.startsWith('custom-') && <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800">Custom</span>}
+                </div>
                 {building.photo ? (
                   <p className="mt-0.5 text-xs text-slate-500">
                     {building.photo.caption || 'No caption'}

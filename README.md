@@ -18,9 +18,13 @@ Then open [http://localhost:3000](http://localhost:3000). The game needs the Map
 ## How the Game Works
 
 - Each game contains five rounds.
+- Choose Easy (200 m), Medium (100 m), or Hard (25 m) before starting.
+- Each game starts with three hearts shared across all rounds.
+- Every attempt has a ten-second countdown. A timeout costs one heart.
 - A round shows one building or campus landmark image at a time.
 - Click the 2D Xavier University map to place or move your guess marker.
-- Submit the guess to reveal the correct location, connecting line, distance, and score.
+- Submit the guess. Guesses inside the selected mode's radius are accepted; a miss costs one heart and lets you try again while hearts remain.
+- When a guess is accepted, the correct location, connecting line, distance, and score are revealed.
 - The final screen shows total score, average distance, and each round's result.
 
 Scoring uses an exponential campus-scale decay:
@@ -33,9 +37,15 @@ Scores are clamped between 0 and 5,000 points. The scoring constants live in [li
 
 ## Adding Game Images
 
-The game uses the building records in [data/buildings.ts](data/buildings.ts) as its location dataset. Upload a photo for a building through `/admin/photos`; the game automatically uses that stored photo for the matching location. Until a photo is uploaded, the game displays the local placeholder at `public/images/placeholder-building.svg` so the round remains playable.
+The game includes the building records in [data/buildings.ts](data/buildings.ts) and any custom records created by an admin. Upload a photo for a location through `/admin/photos`; the game automatically uses that stored photo for the matching location. Until a photo is uploaded, the game displays the local placeholder at `public/images/placeholder-building.svg` so the round remains playable.
 
-The building `coordinates` value is the answer location and uses Mapbox's `[longitude, latitude]` order. Keep each building ID stable after uploading a photo.
+Each location's `coordinates` value is the answer location and uses Mapbox's `[longitude, latitude]` order. Keep each location ID stable after uploading a photo.
+
+## Adding Custom Locations
+
+Admins can create non-building game locations directly from `/admin/photos`. Enter a name, category, latitude, longitude, and optional aliases or description. The coordinates must fall inside the campus map area and use normal latitude/longitude values. After creating the record, select it in the photo uploader and publish its image. Custom locations are stored in the `campus_locations` table and are included automatically in the map and game.
+
+If you created the database before custom locations were added, run the updated [db/schema.sql](db/schema.sql) once in Neon. The `create table if not exists` statements are safe to run against the existing database.
 
 ## Tech Stack
 

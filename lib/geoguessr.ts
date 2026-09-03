@@ -3,6 +3,22 @@ import type { BuildingWithPhoto } from './types';
 export const DEFAULT_ROUNDS = 5;
 export const MAX_ROUND_SCORE = 5000;
 export const SCORE_DECAY_DISTANCE_METERS = 180;
+export const INITIAL_HEARTS = 3;
+export const ROUND_TIME_SECONDS = 10;
+
+export type GameMode = 'easy' | 'medium' | 'hard';
+
+export const MODE_TOLERANCE_METERS: Record<GameMode, number> = {
+  easy: 200,
+  medium: 100,
+  hard: 25,
+};
+
+export const MODE_LABELS: Record<GameMode, string> = {
+  easy: 'Easy',
+  medium: 'Medium',
+  hard: 'Hard',
+};
 
 export type Coordinates = [longitude: number, latitude: number];
 
@@ -30,6 +46,10 @@ export function scoreForDistance(
 ): number {
   if (!Number.isFinite(distance) || distance < 0) return 0;
   return Math.max(0, Math.min(maxScore, Math.round(maxScore * Math.exp(-distance / decayDistance))));
+}
+
+export function isGuessAccepted(distance: number, mode: GameMode): boolean {
+  return Number.isFinite(distance) && distance <= MODE_TOLERANCE_METERS[mode];
 }
 
 /** Shuffle a copy so the source location list remains stable between games. */
