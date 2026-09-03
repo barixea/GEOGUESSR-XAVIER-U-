@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  overscroll-behavior: none;
+}
+
+/* Mapbox attribution should stay legible over the sheet on mobile. */
+.mapboxgl-ctrl-bottom-left {
+  z-index: 5;
+}
