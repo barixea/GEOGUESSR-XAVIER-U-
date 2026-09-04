@@ -13,12 +13,11 @@ cp .env.local.example .env.local
 npm run dev
 ```
 
-Then open [http://localhost:3000](http://localhost:3000). The game needs the Mapbox token to enable map clicks and guessing.
 
 ## How the Game Works
 
 - Each game contains five rounds.
-- Choose Easy (200 m), Medium (100 m), or Hard (25 m) before starting.
+- Choose Easy (200 m), Medium (100 m), or Hard (25 m) before starting. (To be change probably gonna be a  80, 40 and 15 meters respectively)
 - Each game starts with three hearts shared across all rounds.
 - Every attempt has a ten-second countdown. A timeout costs one heart.
 - A round shows one building or campus landmark image at a time.
@@ -30,7 +29,7 @@ Then open [http://localhost:3000](http://localhost:3000). The game needs the Map
 Scoring uses an exponential campus-scale decay:
 
 ```text
-score = round(5000 * exp(-distanceInMeters / 180))
+score = round(5000 * exp(-distanceInMeters / 180)) // to be changed based on the and the area of the Univ
 ```
 
 Scores are clamped between 0 and 5,000 points. The scoring constants live in [lib/geoguessr.ts](lib/geoguessr.ts).
@@ -49,8 +48,6 @@ If you created the database before custom locations were added, run the updated 
 
 ## Tech Stack
 
-This is a **modern, full-stack JavaScript project** built for interactive mapping and admin content management:
-
 ### Frontend & UI
 - **[Next.js 15](https://nextjs.org)** — React framework with built-in routing and edge runtime
 - **[React 19](https://react.dev)** — UI components with hooks
@@ -65,26 +62,9 @@ This is a **modern, full-stack JavaScript project** built for interactive mappin
 - **Node.js** — JavaScript runtime
 - **Git** — Version control
 
-## Future Deployment Plan
-
-When you're ready to go live, here's what you'll need:
-
-### Hosting & Database
-- **[Vercel](https://vercel.com)** — Serverless hosting (free tier available)
-- **[Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres)** — Managed PostgreSQL database for photo metadata
-- **[Vercel Blob](https://vercel.com/docs/storage/vercel-blob)** — Serverless file storage for building photos
-
-### Deployment Setup
-1. Push to GitHub
-2. Import the repo into Vercel
-3. Add environment variables in the Vercel dashboard:
-   - `NEXT_PUBLIC_MAPBOX_TOKEN` — your Mapbox public token
-   - `ADMIN_PASSWORD` — generate with `openssl rand -base64 24`
-   - `ADMIN_SESSION_SECRET` — generate with `openssl rand -base64 32`
-
-4. Create a Vercel Postgres database (Storage → Create Database → Postgres)
-5. Connect Blob storage (Storage → Create Database → Blob)
-6. Run the schema: `vercel env pull .env.local && npm run db:push`
+## DEPLOYED AT  VERCEL 
+- BLOB Storage
+- Neon Postgre Database
 
 Then access the admin panel at `/admin/login` to upload photos!
 
@@ -104,13 +84,14 @@ Or just delete the old photo and re-upload under the new ID.
 
 - **Campus Geoguessr** — Five-round single-player image guessing game
 - **2D Campus Map** — Click-to-place guess marker with answer reveal and distance scoring
-- **Theme System** — Built-in themes (XU Blue, Red) with easy extension
-- **2D & 3D Building Map** — Original exploratory map at `/map`
 - **Building Search** — Find buildings by name or rooms inside them
 - **Geolocation** — Show your current location on the map
 - **Photo Gallery** — Admin panel to upload and manage building photos
-- **Secure Auth** — Password-protected admin area
+- **Secure Auth** — Password-protected admin area (Middleware)
 
+## Features to Add
+- Custom events
+- Multiplayer
 ## 📄 License
 
 MIT
