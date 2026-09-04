@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { Map as MapboxMap } from 'mapbox-gl';
 import Map, {
   Layer,
   Marker,
@@ -65,6 +66,26 @@ const RESULT_LINE = {
 };
 
 const MARKER_BASE = 'grid size-8 place-items-center rounded-full border-2 border-white shadow-lg';
+
+// Keep the guessing map visually neutral so map labels do not reveal the answer.
+const configureGeoguessrMap = (map: MapboxMap) => {
+  const config: Record<string, boolean> = {
+    show3dObjects: false,
+    showPointOfInterestLabels: false,
+    showLandmarkIconLabels: false,
+    showRoadLabels: false,
+    showPlaceLabels: false,
+    showTransitLabels: false,
+  };
+
+  for (const [key, value] of Object.entries(config)) {
+    try {
+      map.setConfigProperty('basemap', key, value);
+    } catch {
+      // Some Mapbox styles do not expose every Standard basemap property.
+    }
+  }
+};
 
 function GameHeader({
   phase,
@@ -510,13 +531,7 @@ export default function GeoguessrGame({ locations }: Props) {
                   touchPitch={false}
                   attributionControl
                   reuseMaps
-                  onLoad={(event) => {
-                    try {
-                      event.target.setConfigProperty('basemap', 'show3dObjects', false);
-                    } catch {
-                      // Older styles may not expose the Standard basemap config.
-                    }
-                  }}
+                  onLoad={(event) => configureGeoguessrMap(event.target)}
                   onClick={(event) => {
                     if (phase !== 'playing') return;
                     setGuess([event.lngLat.lng, event.lngLat.lat]);
