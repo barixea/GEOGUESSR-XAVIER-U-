@@ -4,10 +4,10 @@ import { xuBlue } from './xu-blue';
 
 export type { Theme, LightPreset } from './types';
 
-// To add a theme: copy red.ts, change the values, import here, add to array.
+// To add a theme: copy red.ts, change the values, import here, add to array. //was used in the other XU MAP project
 export const THEMES: Theme[] = [xuBlue, red];
 
-// Default for new visitors
+// Default theme for first time, visit
 export const DEFAULT_THEME_ID = xuBlue.id;
 
 export const THEME_STORAGE_KEY = 'xu-map:theme';
