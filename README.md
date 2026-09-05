@@ -92,6 +92,7 @@ Or just delete the old photo and re-upload under the new ID.
 ## Features to Add
 - Custom events
 - Multiplayer
+- Better Frontend
 ## 📄 License
 
 MIT
