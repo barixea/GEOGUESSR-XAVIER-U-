@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import PhotoUploadForm from '@/components/admin/PhotoUploadForm';
 import LocationCreateForm from '@/components/admin/LocationCreateForm';
+import LocationToggle from '@/components/admin/LocationToggle';
 import { requireAdmin } from '@/lib/auth';
 import { getAllLocations } from '@/lib/locations';
 import { getBuildingsWithPhotos } from '@/lib/photos';
@@ -26,6 +27,7 @@ export default async function AdminPhotosPage() {
 
   const locations = await getAllLocations();
   const buildingsWithPhotos = await getBuildingsWithPhotos();
+  const enabledCount = locations.filter((location) => location.enabled !== false).length;
 
   return (
     <div className={PAGE}>
@@ -33,6 +35,9 @@ export default async function AdminPhotosPage() {
         <h1 className="text-2xl font-semibold text-slate-900">Locations and photos</h1>
         <p className="mt-1 text-sm text-slate-600">
           Manage the places that can appear in the campus guessing game.
+        </p>
+        <p className="mt-2 text-xs font-semibold text-slate-500">
+          {enabledCount} of {locations.length} locations enabled for new games.
         </p>
       </div>
 
@@ -49,7 +54,7 @@ export default async function AdminPhotosPage() {
         {/* Every building is listed, with or without a photo, so the gaps show. */}
         <ul className="grid gap-4 sm:grid-cols-2">
           {buildingsWithPhotos.map((building) => (
-            <li key={building.id} className={PHOTO_CARD}>
+            <li key={building.id} className={`${PHOTO_CARD} ${building.enabled === false ? 'opacity-70' : ''}`}>
               <div className={PHOTO_FRAME}>
                 <Image
                   src={building.photo?.url ?? '/images/placeholder-building.svg'}
@@ -60,9 +65,16 @@ export default async function AdminPhotosPage() {
                 />
               </div>
               <div className="p-3">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-slate-900">{building.name}</p>
-                  {building.id.startsWith('custom-') && <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800">Custom</span>}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <p className="text-sm font-medium text-slate-900">{building.name}</p>
+                    {building.id.startsWith('custom-') && <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800">Custom</span>}
+                  </div>
+                  <LocationToggle
+                    locationId={building.id}
+                    locationName={building.name}
+                    enabled={building.enabled !== false}
+                  />
                 </div>
                 {building.photo ? (
                   <p className="mt-0.5 text-xs text-slate-500">

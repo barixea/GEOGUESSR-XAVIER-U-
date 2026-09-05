@@ -18,6 +18,11 @@ type CustomLocationRow = {
   description: string | null;
 };
 
+type LocationSettingRow = {
+  location_id: string;
+  enabled: boolean;
+};
+
 const loadCustomLocations = unstable_cache(
   async (): Promise<Building[]> => {
     if (!hasDatabase) return [];
@@ -42,8 +47,25 @@ const loadCustomLocations = unstable_cache(
   { tags: [LOCATION_CACHE_TAG], revalidate: 3600 },
 );
 
+const loadLocationSettings = unstable_cache(
+  async (): Promise<Record<string, boolean>> => {
+    if (!hasDatabase) return {};
+
+    const rows = await getSql()<LocationSettingRow[]>`
+      select location_id, enabled
+      from campus_location_settings
+    `;
+
+    return Object.fromEntries(rows.map((row) => [row.location_id, row.enabled]));
+  },
+  ['campus-location-settings'],
+  { tags: [LOCATION_CACHE_TAG], revalidate: 3600 },
+);
+
 export async function getAllLocations(): Promise<Building[]> {
   let customLocations: Building[] = [];
+  let locationSettings: Record<string, boolean> = {};
+
   try {
     customLocations = await loadCustomLocations();
   } catch (error) {
@@ -51,7 +73,27 @@ export async function getAllLocations(): Promise<Building[]> {
     console.error('[locations] falling back to static locations:', error);
   }
 
-  return [...BUILDINGS, ...customLocations];
+  try {
+    locationSettings = await loadLocationSettings();
+  } catch (error) {
+    // The settings table may not exist until the latest schema is run; default to enabled.
+    console.error('[locations] falling back to enabled locations:', error);
+  }
+
+  const staticLocations = BUILDINGS.map((location) => ({
+    ...location,
+    enabled: locationSettings[location.id] ?? true,
+  }));
+  const databaseLocations = customLocations.map((location) => ({
+    ...location,
+    enabled: locationSettings[location.id] ?? true,
+  }));
+
+  return [...staticLocations, ...databaseLocations];
+}
+
+export function isLocationEnabled(location: Pick<Building, 'enabled'>): boolean {
+  return location.enabled !== false;
 }
 
 export function slugifyLocationName(name: string): string {

@@ -16,5 +16,5 @@ export async function middleware(request: NextRequest) {
 
 // Coarse security gate; admin routes check the session again for safety
 export const config = {
-  matcher: ['/admin/photos/:path*', '/api/admin/photos/:path*'],
+  matcher: ['/admin/photos/:path*', '/api/admin/photos/:path*', '/api/admin/locations/:path*'],
 };

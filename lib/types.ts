@@ -14,6 +14,8 @@ export interface Building {
   rooms: string[];
   // Shown in the detail sheet; empty string shows nothing
   description: string;
+  // Admin-controlled participation in Geoguessr. Built-in locations default to true.
+  enabled?: boolean;
 }
 
 export interface BuildingPhoto {

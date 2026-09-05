@@ -21,3 +21,11 @@ create table if not exists campus_locations (
 );
 
 create index if not exists campus_locations_name_idx on campus_locations (name);
+
+-- Per-location game participation. This table intentionally has no foreign key
+-- because it can also store settings for built-in locations from data/buildings.ts.
+create table if not exists campus_location_settings (
+  location_id   text primary key,
+  enabled       boolean not null default true,
+  updated_at    timestamptz not null default now()
+);

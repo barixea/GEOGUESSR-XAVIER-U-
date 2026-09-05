@@ -199,9 +199,10 @@ function StartScreen({
           <button
             type="button"
             onClick={onStart}
-            className="inline-flex min-h-12 items-center justify-center rounded-xl bg-brand px-7 text-sm font-bold text-brand-fg shadow-sm transition hover:bg-brand-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+            disabled={locationCount === 0}
+            className="inline-flex min-h-12 items-center justify-center rounded-xl bg-brand px-7 text-sm font-bold text-brand-fg shadow-sm transition hover:bg-brand-dark disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
           >
-            Start game
+            {locationCount > 0 ? 'Start game' : 'No enabled locations'}
           </button>
         </div>
       </section>
