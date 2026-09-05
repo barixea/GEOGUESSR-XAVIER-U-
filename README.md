@@ -93,6 +93,11 @@ Or just delete the old photo and re-upload under the new ID.
 - Custom events
 - Multiplayer
 - Better Frontend
+- To create a better Random System for Locations, and use personal pictures so that clues won't be shown
+
+## NOTE
+- **HAVE NOT YET UPLOADED THE PHOTOS OF EACH RESPECTIVE BUILDINGS**
+- To add more mystery egg locations
 ## 📄 License
 
 MIT
