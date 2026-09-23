@@ -9,7 +9,6 @@ Get the game running locally in minutes:
 ```bash
 npm install
 cp .env.local.example .env.local
-# Fill in NEXT_PUBLIC_MAPBOX_TOKEN — grab one at mapbox.com/account/access-tokens (free tier works)
 npm run dev
 ```
 
